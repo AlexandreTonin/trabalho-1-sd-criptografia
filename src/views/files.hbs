@@ -1,1 +1,38 @@
-<h1>{{message}}</h1>
+<section>
+    <div class="flex justify-between items-center">
+        <h1 class="font-bold">Arquivos ({{files.length}})</h1>
+
+        <button type="button"
+            class="bg-blue-500 hover:bg-blue-600 transition text-white rounded-lg px-4 py-2 flex items-center gap-1 cursor-pointer">
+            <i data-lucide="plus" class="w-5 h-5"></i>
+            Enviar Arquivo
+        </button>
+    </div>
+
+    <div class="mt-4">
+        <table class="w-full">
+            <thead>
+                <tr>
+                    <th class="text-left font-semibold"></th>
+                    <th class="text-left font-semibold">Nome</th>
+                    <th class="text-left font-semibold">Tamanho</th>
+                    <th class="text-left font-semibold">Criado em</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each files}}
+                <tr class="border-y border-gray-300 h-10 hover:bg-gray-100 cursor-pointer">
+                    <td class="w-8">
+                        <i data-lucide="file" class="text-gray-400 w-6 h-6"></i>
+                    </td>
+                    <td>
+                        {{this.name}}
+                    </td>
+                    <td>{{this.size}} bytes</td>
+                    <td>{{this.createdAt}}</td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+</section>

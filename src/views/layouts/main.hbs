@@ -5,10 +5,23 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Criptografia</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 
 <body>
-    {{{body}}}
+    <header class="p-4 shadow-lg bg-gradient-to-r from-blue-500 to-blue-300 flex items-center gap-2">
+        <i data-lucide="book-key" class="text-white w-6 h-6"></i>
+        <h1 class="text-white font-semibold">Cofre de Arquivos</h1>
+    </header>
+
+    <main class="p-4">
+        {{{body}}}
+    </main>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        lucide.createIcons();
+    </script>
 </body>
 
 </html>
