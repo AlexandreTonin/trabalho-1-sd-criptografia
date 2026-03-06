@@ -3,8 +3,7 @@ import { engine } from "express-handlebars";
 import morgan from "morgan";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import EncryptController from "./controllers/encrypt.controller.js";
-import DecryptController from "./controllers/decrypt.controller.js";
+import FileController from "./controllers/file.controller.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -28,8 +27,15 @@ app.engine(
 app.set("view engine", ".hbs");
 app.set("views", path.join(__dirname, "views"));
 
-app.post("/encrypt", EncryptController.encrypt);
-app.post("/decrypt", DecryptController.decrypt);
+const router = express.Router();
+
+router.get("/", FileController.findAll);
+router.get("/:id", FileController.findById);
+router.post("/", FileController.create);
+router.put("/:id", FileController.update);
+router.delete("/:id", FileController.delete);
+
+app.use("/files", router);
 
 app.get("/", (_req, res) => {
   res.render("home", {
