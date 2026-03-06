@@ -38,7 +38,5 @@ router.delete("/:id", FileController.delete);
 app.use("/files", router);
 
 app.get("/", (_req, res) => {
-  res.render("home", {
-    message: "teste",
-  });
+  res.redirect("/files");
 });
