@@ -51,9 +51,8 @@ app.set('views', path.join(__dirname, 'views'));
 const router = express.Router();
 
 router.get('/', FileController.findAll);
-router.get('/:id', FileController.findById);
+router.get('/:id', FileController.download);
 router.post('/', upload.single('file'), FileController.create);
-router.put('/:id', FileController.update);
 router.delete('/:id', FileController.delete);
 
 app.use('/files', router);

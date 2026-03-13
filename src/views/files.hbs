@@ -22,7 +22,8 @@
             <tbody>
                 {{#if files.length}}
                 {{#each files}}
-                <tr class="border-y border-gray-300 h-10 hover:bg-gray-100 cursor-pointer">
+                <tr class="border-y border-gray-300 h-10 hover:bg-gray-100 cursor-pointer"
+                    onclick="window.location.href='/files/{{this.name}}'">
                     <td class="w-8">
                         <i data-lucide="file" class="text-gray-400 w-6 h-6"></i>
                     </td>

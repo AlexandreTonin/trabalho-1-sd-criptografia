@@ -1,27 +1,32 @@
 import type { Request, Response } from 'express';
-import { promises as fs } from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const storagePath = path.join(__dirname, '..', '..', 'storage');
-
-type ListedFile = {
-  name: string;
-  size: number;
-  createdAt: string;
-};
+import FileService from '../services/file.service.js';
 
 export default class FileController {
   public static async findAll(_req: Request, res: Response) {
-    const files = await FileController.readFilesFromStorage();
+    const files = await FileService.findAll();
 
-    res.render('files', {
-      files,
+    res.render('files', { files });
+  }
+
+  public static download(req: Request, res: Response) {
+    const filename = Array.isArray(req.params['id'])
+      ? req.params['id'][0]
+      : req.params['id'];
+
+    if (!filename) {
+      res.status(400).send('ID do arquivo não informado.');
+      return;
+    }
+
+    const filePath = FileService.getFilePath(filename);
+
+    res.download(filePath, filename, (err) => {
+      if (err) {
+        res.status(404).send('Arquivo não encontrado.');
+      }
     });
   }
-  public static findById(req: Request, res: Response) {}
+
   public static create(req: Request, res: Response) {
     if (!req.file) {
       res.status(400).send('Nenhum arquivo enviado.');
@@ -30,27 +35,18 @@ export default class FileController {
 
     res.redirect('/files');
   }
-  public static update(req: Request, res: Response) {}
-  public static delete(req: Request, res: Response) {}
 
-  private static async readFilesFromStorage(): Promise<ListedFile[]> {
-    const entries = await fs.readdir(storagePath, { withFileTypes: true });
+  public static async delete(req: Request, res: Response) {
+    const filename = Array.isArray(req.params['id'])
+      ? req.params['id'][0]
+      : req.params['id'];
 
-    const files = await Promise.all(
-      entries
-        .filter((entry) => entry.isFile())
-        .map(async (entry) => {
-          const fullPath = path.join(storagePath, entry.name);
-          const stats = await fs.stat(fullPath);
+    if (!filename) {
+      res.status(400).send('ID do arquivo não informado.');
+      return;
+    }
 
-          return {
-            name: entry.name,
-            size: stats.size,
-            createdAt: stats.birthtime.toLocaleString('pt-BR'),
-          };
-        }),
-    );
-
-    return files.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+    await FileService.delete(filename);
+    res.redirect('/files');
   }
 }
