@@ -1,6 +1,13 @@
 <section>
     <div class="flex justify-between items-center">
-        <h1 class="font-bold">Arquivos ({{files.length}})</h1>
+        <div class="flex items-center gap-4">
+            <h1 class="font-bold">Arquivos ({{files.length}})</h1>
+
+            <button type="button" onclick="window.location.reload()"
+                class="border border-gray-300 hover:bg-gray-100 transition rounded-lg px-2 py-1 flex items-center gap-1 cursor-pointer">
+                <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+            </button>
+        </div>
 
         <button id="open-upload-modal" type="button"
             class="bg-blue-500 hover:bg-blue-600 shadow-md transition text-white rounded-lg px-4 py-2 flex items-center gap-1 cursor-pointer">
