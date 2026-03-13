@@ -2,7 +2,7 @@
     <div class="flex justify-between items-center">
         <h1 class="font-bold">Arquivos ({{files.length}})</h1>
 
-        <button type="button"
+        <button id="open-upload-modal" type="button"
             class="bg-blue-500 hover:bg-blue-600 shadow-md transition text-white rounded-lg px-4 py-2 flex items-center gap-1 cursor-pointer">
             <i data-lucide="plus" class="w-5 h-5"></i>
             Enviar Arquivo
@@ -20,6 +20,7 @@
                 </tr>
             </thead>
             <tbody>
+                {{#if files.length}}
                 {{#each files}}
                 <tr class="border-y border-gray-300 h-10 hover:bg-gray-100 cursor-pointer">
                     <td class="w-8">
@@ -32,7 +33,62 @@
                     <td>{{this.createdAt}}</td>
                 </tr>
                 {{/each}}
+                {{else}}
+                <tr class="border-y border-gray-300 h-10">
+                    <td colspan="4" class="text-center text-gray-500 py-4">
+                        Nenhum arquivo encontrado.
+                    </td>
+                </tr>
+                {{/if}}
             </tbody>
         </table>
     </div>
+
+    <div id="upload-modal" class="fixed inset-0 bg-black/40 hidden items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-lg shadow-md w-full max-w-md p-4">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="font-semibold">Enviar arquivo</h2>
+                <button id="close-upload-modal" type="button" class="text-gray-500 hover:text-gray-700 cursor-pointer">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <form action="/files" method="post" enctype="multipart/form-data" class="space-y-4">
+                <input name="file" type="file" required class="w-full border border-gray-300 rounded-lg p-2" />
+
+                <div class="flex justify-end gap-2">
+                    <button id="cancel-upload-modal" type="button"
+                        class="border border-gray-300 hover:bg-gray-100 transition rounded-lg px-4 py-2 cursor-pointer">
+                        Cancelar
+                    </button>
+                    <button type="submit"
+                        class="bg-blue-500 hover:bg-blue-600 shadow-md transition text-white rounded-lg px-4 py-2 cursor-pointer">
+                        Enviar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </section>
+
+<script>
+    const openUploadModalButton = document.getElementById('open-upload-modal');
+    const closeUploadModalButton = document.getElementById('close-upload-modal');
+    const cancelUploadModalButton = document.getElementById('cancel-upload-modal');
+    const uploadModal = document.getElementById('upload-modal');
+
+    openUploadModalButton?.addEventListener('click', () => {
+        uploadModal?.classList.remove('hidden');
+        uploadModal?.classList.add('flex');
+    });
+
+    closeUploadModalButton?.addEventListener('click', () => {
+        uploadModal?.classList.add('hidden');
+        uploadModal?.classList.remove('flex');
+    });
+
+    cancelUploadModalButton?.addEventListener('click', () => {
+        uploadModal?.classList.add('hidden');
+        uploadModal?.classList.remove('flex');
+    });
+</script>
