@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import { engine } from 'express-handlebars';
 import morgan from 'morgan';
@@ -9,26 +10,13 @@ import multer from 'multer';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const storagePath = path.join(__dirname, '..', 'storage');
-
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => {
-    cb(null, storagePath);
-  },
-
-  filename: (_req, file, cb) => {
-    const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
-
-    cb(null, unique + path.extname(file.originalname));
-  },
-});
-
 export const upload = multer({
-  storage,
+  storage: multer.memoryStorage(),
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB
+    fileSize: 15 * 1024 * 1024, // 15MB
   },
 });
+1;
 
 export const app = express();
 

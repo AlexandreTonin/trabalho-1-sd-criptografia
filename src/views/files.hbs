@@ -1,4 +1,15 @@
 <section>
+    {{#if hasAccessDeniedError}}
+    <div id="access-denied-toast"
+        class="fixed top-4 right-4 z-[60] bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded-lg shadow-md flex items-center gap-3">
+        <i data-lucide="shield-alert" class="w-5 h-5"></i>
+        <span>Acesso negado: chave incorreta.</span>
+        <button type="button" onclick="closeAccessDeniedToast()" class="text-red-700 hover:text-red-900 cursor-pointer">
+            <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+    </div>
+    {{/if}}
+
     <div class="flex justify-between items-center">
         <div class="flex items-center gap-4">
             <h1 class="font-bold">Arquivos ({{files.length}})</h1>
@@ -30,7 +41,7 @@
                 {{#if files.length}}
                 {{#each files}}
                 <tr class="border-y border-gray-300 h-10 hover:bg-gray-100 cursor-pointer"
-                    onclick="window.location.href='/files/{{this.name}}'">
+                    onclick="openDownloadModal('{{this.name}}')">
                     <td class="w-8">
                         <i data-lucide="file" class="text-gray-400 w-6 h-6"></i>
                     </td>
@@ -50,6 +61,38 @@
                 {{/if}}
             </tbody>
         </table>
+    </div>
+
+    <!-- Download modal -->
+    <div id="download-modal" class="fixed inset-0 bg-black/40 hidden items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-lg shadow-md w-full max-w-md p-4">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="font-semibold">Baixar arquivo</h2>
+                <button type="button" onclick="closeDownloadModal()"
+                    class="text-gray-500 hover:text-gray-700 cursor-pointer">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <form id="download-form" method="get" class="space-y-4">
+                <div class="space-y-1">
+                    <label class="text-sm font-medium text-gray-700">Chave de descriptografia</label>
+                    <input name="key" type="password" required placeholder="Digite a chave..."
+                        class="w-full border border-gray-300 rounded-lg p-2" />
+                </div>
+
+                <div class="flex justify-end gap-2">
+                    <button type="button" onclick="closeDownloadModal()"
+                        class="border border-gray-300 hover:bg-gray-100 transition rounded-lg px-4 py-2 cursor-pointer">
+                        Cancelar
+                    </button>
+                    <button type="submit"
+                        class="bg-blue-500 hover:bg-blue-600 shadow-md transition text-white rounded-lg px-4 py-2 cursor-pointer">
+                        Baixar
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <div id="upload-modal" class="fixed inset-0 bg-black/40 hidden items-center justify-center p-4 z-50">
@@ -99,4 +142,32 @@
         uploadModal?.classList.add('hidden');
         uploadModal?.classList.remove('flex');
     });
+
+    const downloadModal = document.getElementById('download-modal');
+    const downloadForm = document.getElementById('download-form');
+
+    function openDownloadModal(filename) {
+        downloadForm?.setAttribute('action', '/files/' + encodeURIComponent(filename));
+        downloadModal?.classList.remove('hidden');
+        downloadModal?.classList.add('flex');
+        downloadModal?.querySelector('input[name="key"]')?.focus();
+    }
+
+    function closeDownloadModal() {
+        downloadModal?.classList.add('hidden');
+        downloadModal?.classList.remove('flex');
+        downloadForm?.reset();
+    }
+
+    function closeAccessDeniedToast() {
+        const toast = document.getElementById('access-denied-toast');
+        toast?.remove();
+    }
+
+    const accessDeniedToast = document.getElementById('access-denied-toast');
+    if (accessDeniedToast) {
+        setTimeout(() => {
+            accessDeniedToast.remove();
+        }, 4000);
+    }
 </script>

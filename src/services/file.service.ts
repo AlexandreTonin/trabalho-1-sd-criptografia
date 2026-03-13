@@ -1,6 +1,7 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import CryptoService from './crypto.service.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -34,11 +35,47 @@ export default class FileService {
     return files.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   }
 
-  public static getFilePath(filename: string): string {
-    return path.join(storagePath, filename);
+  public static async create(file: Express.Multer.File): Promise<void> {
+    const encryptionKey = process.env['FILE_ENCRYPTION_KEY'];
+
+    if (!encryptionKey) {
+      throw new Error('FILE_ENCRYPTION_KEY não definida no ambiente.');
+    }
+
+    const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    const filename = unique + path.extname(file.originalname);
+    const destPath = path.join(storagePath, filename);
+
+    const encrypted = CryptoService.encryptBuffer(file.buffer, encryptionKey);
+
+    await fs.writeFile(destPath, encrypted);
+  }
+
+  public static async download(filename: string, key: string): Promise<Buffer> {
+    const encryptionKey = process.env['FILE_ENCRYPTION_KEY'];
+
+    if (!encryptionKey) {
+      throw new Error('FILE_ENCRYPTION_KEY não definida no ambiente.');
+    }
+
+    if (key !== encryptionKey) {
+      throw new InvalidKeyError();
+    }
+
+    const filePath = path.join(storagePath, filename);
+    const encrypted = await fs.readFile(filePath);
+
+    return CryptoService.decryptBuffer(encrypted, encryptionKey);
   }
 
   public static async delete(filename: string): Promise<void> {
     await fs.unlink(path.join(storagePath, filename));
+  }
+}
+
+export class InvalidKeyError extends Error {
+  constructor() {
+    super('Chave de descriptografia inválida.');
+    this.name = 'InvalidKeyError';
   }
 }
