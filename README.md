@@ -112,3 +112,11 @@ Nesse cenário:
 Mesmo que alguém copie o disco do servidor, o arquivo continuará ilegível.
 
 Esse modelo é usado em serviços de armazenamento seguro de documentos corporativos.
+
+## Print
+
+![home](./prints/home.png)
+![novo arquivo](./prints/new-file.png)
+![download do arquivo](./prints/download-file.png)
+![chave incorreta](./prints/wrong-key.png)
+![arquivo baixado](./prints/downloaded-file.png)
